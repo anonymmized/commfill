@@ -54,3 +54,29 @@ This project is free and open-source. Feel free to use, modify, and distribute i
 > Made with love for clean code.
 
 > Part of a growing collection of C algorithms and utilities.
+
+## 🔮 Future Plans
+
+### Here’s what’s coming next:
+
+- 🧹 ***Remove existing comments***
+    Add an option to automatically strip all trailing `// ...` comments from the file before reformatting — perfect for cleaning up and re-aligning.
+    
+- ⚙️ ***Command-line options***
+    Support intuitive flags like:
+    ```bash
+    ./comment-align -i input.txt -r    # -r: remove old comments
+    ./comment-align --no-comment       # skip adding "//" entirely
+    ./comment-align -w 80              # enforce fixed width (ignore max line)
+    ```
+
+- 🔄 ***Non-destructive mode***
+    Optionally write output to a new file (e.g., input.txt.aligned) instead of overwriting the original.
+
+- 🌐 ***Multi-language support***
+    Detect or specify comment style: // (C/C++/Java), # (Python/Shell), -- (SQL), etc.
+
+- 📂 ***Batch processing***
+    Apply formatting to multiple files or entire directories.
+    Your ideas are welcome! Feel free to open an issue or pull request on GitHub.
+
