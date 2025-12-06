@@ -61,7 +61,7 @@ This project is free and open-source. Feel free to use, modify, and distribute i
 
 - 🧹 ***Remove existing comments***
     Add an option to automatically strip all trailing `// ...` comments from the file before reformatting — perfect for cleaning up and re-aligning.
-    
+
 - ⚙️ ***Command-line options***
     Support intuitive flags like:
     ```bash
@@ -80,3 +80,5 @@ This project is free and open-source. Feel free to use, modify, and distribute i
     Apply formatting to multiple files or entire directories.
     Your ideas are welcome! Feel free to open an issue or pull request on GitHub.
 
+## ⚠️ Note
+> ***This tool aligns lines by byte count, not visual length. Strings containing escape sequences (like \n, \t) will appear misaligned in editors because they are counted as multiple bytes, but displayed as single characters.***
