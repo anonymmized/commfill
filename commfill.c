@@ -112,24 +112,45 @@ int main(int argc, char *argv[]) {
     char filename[MAXLINE];
     int remove_old = 0;
     int file_input = 0;
-    char file_input_s[MAXLINE];
-    int c;
-    while (--argc > 0 && (*++argv)[0] == '-') {
-        while (c = *++argv[0]) {
-            switch (c) {
-                case 'i':
+    char *file_input_s = NULL;
+    char **arg = argv + 1;
+    int remaining = argc - 1;
+    while (remaining > 0) {
+        char *current = *arg;
+        if (current[0] == '-' && current[1] != '\0') {
+            if (strcmp(current, "-i") == 0) {
+                if (remaining > 1) {
                     file_input = 1;
-                    file_input_s = *argv;
-                    break;
-                case 'r':
-                    remove_old = 1;
-                    break;
-                default: 
-                    printf("Start in normal mode...\n");
-                    break;
+                    file_input_s = *(arg + 1);
+                    arg += 2;
+                    remaining -= 2;
+                    continue;
+                } else {
+                    printf("Error: option -i requires a filename\n");
+                    return 1;
+                }
+            } else if (strcmp(current, "-r") == 0) {
+                remove_old = 1;
+                arg++;
+                remaining--;
+                continue;
+            } else {
+                printf("Unknown option: %s\n", current);
             }
+        } else {
+            break;
         }
     }
+    if (!remove_old && !file_input) {
+        printf("Continue in normal mode...\n");
+    } else if (remove_old) {
+        printf("Continue with -r\n");
+    } else if (file_input) {
+        printf("Continue with -i\n");
+    } else {
+        printf("Continue with -r and -i\n");
+    }
+    
     char filename_sl[MAXLINE];
     int len = get_filename(filename, MAXLINE);
     if (len == 0) {
