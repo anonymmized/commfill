@@ -108,8 +108,28 @@ size_t file_parse(char *filename) {
     return max_len;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     char filename[MAXLINE];
+    int remove_old = 0;
+    int file_input = 0;
+    char file_input_s[MAXLINE];
+    int c;
+    while (--argc > 0 && (*++argv)[0] == '-') {
+        while (c = *++argv[0]) {
+            switch (c) {
+                case 'i':
+                    file_input = 1;
+                    file_input_s = *argv;
+                    break;
+                case 'r':
+                    remove_old = 1;
+                    break;
+                default: 
+                    printf("Start in normal mode...\n");
+                    break;
+            }
+        }
+    }
     char filename_sl[MAXLINE];
     int len = get_filename(filename, MAXLINE);
     if (len == 0) {
