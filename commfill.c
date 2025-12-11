@@ -10,6 +10,52 @@ int get_filename(char *line, int lim);
 int check_filename(char *filename);
 size_t file_parse(char *filename);
 
+void remove_old_comms(char *filename) {
+    FILE *input = fopen(filename, "r");
+    if (!input) {
+        printf("Error: cannot open file for reading.\n");
+        return;
+    }
+
+    char temp_filename[MAXLINE];
+    snprintf(temp_filename, sizeof(temp_filename), "%s.tmp", filename);
+
+    FILE *output = fopen(temp_filename, "w");
+    if (!output) {
+        printf("Error: cannot create temporary file.\n");
+        fclose(input);
+        return;
+    }
+
+    char line[MAXLINE];
+    while (fgets(line, sizeof(line), input)) {
+        int in_string = 0;
+        int escaped = 0;
+        char *comment_start = NULL;
+        for (char *p = line; *p != '\0'; p++) {
+            if (!escaped) {
+                if (*p == '"') {
+                    in_string = !in_string;
+                }
+                if (*p == '/' && *(p + 1) == '/' && !in_string) {
+                    comment_start = p;
+                }
+            }
+            escaped = (!escaped && *p == '\\');
+        }
+        if (comment_start) {
+            *comment_start = '\n';
+            *(comment_start + 1) = '\0';
+        }
+        fputs(line, output);
+    }
+    fclose(input);
+    fclose(output);
+
+    remove(filename);
+    rename(temp_filename, filename);
+}
+
 void edit_file(size_t max_len, char *filename) {
     FILE *input = fopen(filename, "r");
     if (!input) {
@@ -145,6 +191,7 @@ int main(int argc, char *argv[]) {
         printf("Continue in normal mode...\n");
     } else if (remove_old) {
         printf("Continue with -r\n");
+
     } else if (file_input) {
         printf("Continue with -i\n");
     } else {
@@ -164,7 +211,6 @@ int main(int argc, char *argv[]) {
     if (check_filename(filename_sl)) {
         printf("Warning: filename has no extension.\n");
     }
-    
     size_t max_len = file_parse(filename);
     printf("Max line length: %zu\n", max_len);
 
@@ -174,5 +220,6 @@ int main(int argc, char *argv[]) {
     } else {
         printf("File is empty or could not be processed.\n");
     }
+
     return 0;
 }
