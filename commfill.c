@@ -4,7 +4,7 @@
 
 #define MAXLINE 1000
 
-void edit_file(size_t max_len, char *filename);
+void edit_file(size_t max_len, char *filename, int fixed);
 void remove_old_comms(char *filename);
 void get_slash(char *filename_sl, char *filename);
 int get_filename(char *line, int lim);
@@ -57,7 +57,7 @@ void remove_old_comms(char *filename) {
     rename(temp_filename, filename);
 }
 
-void edit_file(size_t max_len, char *filename) {
+void edit_file(size_t max_len, char *filename, int fixed) {
     FILE *input = fopen(filename, "r");
     if (!input) {
         printf("Error: cannot open file for reading.\n");
@@ -83,8 +83,14 @@ void edit_file(size_t max_len, char *filename) {
         }
 
         fputs(line, output);
-        for (size_t i = len; i < max_len; i++) {
-            fputc(' ', output);
+        if (fixed > 0) {
+            for (size_t i = 0; i < fixed; i++) {
+                fputc(' ', output);
+            }
+        } else {
+            for (size_t i = len; i < max_len; i++) {
+                fputc(' ', output);
+            }
         }
         fputs(" //\n", output);
     }
@@ -159,6 +165,7 @@ int main(int argc, char *argv[]) {
     char filename[MAXLINE];
     int remove_old = 0;
     int file_input = 0;
+    char *fixed = NULL;
     int get_name = 0;
     char *file_input_s = NULL;
     char **arg = argv + 1;
@@ -182,12 +189,23 @@ int main(int argc, char *argv[]) {
                 arg++;
                 remaining--;
                 continue;
+            } else if (strcmp(current, "-w") == 0) {
+                if (remaining > 1) {
+                    fixed = *(arg + 1);
+                    arg += 1;
+                    remaining -= 2;
+                    continue;
+                }
             } else {
                 printf("Unknown option: %s\n", current);
             }
         } else {
             break;
         }
+    }
+    int fixed_i = 0;
+    if (fixed) {
+        fixed_i = atoi(fixed);
     }
     char filename_sl[MAXLINE];
     if (file_input == 1) {
@@ -213,8 +231,6 @@ int main(int argc, char *argv[]) {
         }
     }
     
-    
-
     get_slash(filename_sl, filename);
     printf("Filename: %s\n", filename_sl);
 
@@ -230,7 +246,7 @@ int main(int argc, char *argv[]) {
     printf("Max line length: %zu\n", max_len);
 
     if (max_len > 0) {
-        edit_file(max_len, filename);
+        edit_file(max_len, filename, fixed_i);
         printf("File updated successfully.\n");
     } else {
         printf("File is empty or could not be processed.\n");
