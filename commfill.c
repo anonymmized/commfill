@@ -159,6 +159,7 @@ int main(int argc, char *argv[]) {
     char filename[MAXLINE];
     int remove_old = 0;
     int file_input = 0;
+    int get_name = 0;
     char *file_input_s = NULL;
     char **arg = argv + 1;
     int remaining = argc - 1;
@@ -189,11 +190,30 @@ int main(int argc, char *argv[]) {
         }
     }
     char filename_sl[MAXLINE];
-    int len = get_filename(filename, MAXLINE);
-    if (len == 0) {
-        printf("No filename entered.\n");
-        return 1;
+    if (file_input == 1) {
+        size_t len = strlen(file_input_s);
+        if (len >= MAXLINE) {
+            printf("Error: filename too long\n");
+            return 1;
+        }
+        strcpy(filename, file_input_s);
+        get_name = 1;
     }
+    if (get_name == 0) {
+        int len = get_filename(filename, MAXLINE);
+        if (len == 0) {
+            printf("No filename entered.\n");
+            return 1;
+        }
+    } else if (get_name == 1) {
+        int len = strlen(filename);
+        if (len == 0) {
+            printf("No filename entered.\n");
+            return 1;
+        }
+    }
+    
+    
 
     get_slash(filename_sl, filename);
     printf("Filename: %s\n", filename_sl);
