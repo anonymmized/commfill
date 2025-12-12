@@ -5,6 +5,7 @@
 #define MAXLINE 1000
 
 void edit_file(size_t max_len, char *filename);
+void remove_old_comms(char *filename);
 void get_slash(char *filename_sl, char *filename);
 int get_filename(char *line, int lim);
 int check_filename(char *filename);
@@ -187,17 +188,6 @@ int main(int argc, char *argv[]) {
             break;
         }
     }
-    if (!remove_old && !file_input) {
-        printf("Continue in normal mode...\n");
-    } else if (remove_old) {
-        printf("Continue with -r\n");
-
-    } else if (file_input) {
-        printf("Continue with -i\n");
-    } else {
-        printf("Continue with -r and -i\n");
-    }
-    
     char filename_sl[MAXLINE];
     int len = get_filename(filename, MAXLINE);
     if (len == 0) {
@@ -211,6 +201,11 @@ int main(int argc, char *argv[]) {
     if (check_filename(filename_sl)) {
         printf("Warning: filename has no extension.\n");
     }
+    if (remove_old == 1) {
+        remove_old_comms(filename);
+        printf("Old comments were deleted\n");
+        return 0;
+    }
     size_t max_len = file_parse(filename);
     printf("Max line length: %zu\n", max_len);
 
@@ -220,6 +215,6 @@ int main(int argc, char *argv[]) {
     } else {
         printf("File is empty or could not be processed.\n");
     }
-
+    
     return 0;
 }
