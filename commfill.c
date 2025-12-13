@@ -5,11 +5,31 @@
 #define MAXLINE 1000
 
 void edit_file(size_t max_len, char *filename, int fixed);
+void create_edited_file(size_t max_len, char *filename, int fixed);
 void remove_old_comms(char *filename);
 void get_slash(char *filename_sl, char *filename);
 int get_filename(char *line, int lim);
 int check_filename(char *filename);
 size_t file_parse(char *filename);
+char *add_aligned(char *filename, char *string_to_add);
+
+char *add_aligned(char *filename, char *string_to_add) {
+    int len_filename = strlen(filename);
+    int len_string = strlen(string_to_add);
+    char* new_filename = malloc(MAXLINE * sizeof(char));
+    int i = 0;
+    int j;
+    for (j = 0; j < len_filename - 1 && filename[j] != '.'; j++)
+        new_filename[i++] = filename[j];
+    for (int k = 0; k < len_string; k++) {
+        new_filename[i++] = string_to_add[k];
+    }
+    while (filename[j] != '\0') {
+        new_filename[i++] = filename[j++];
+    }
+    new_filename[i] = '\0';
+    return new_filename;
+}
 
 void remove_old_comms(char *filename) {
     FILE *input = fopen(filename, "r");
@@ -55,6 +75,45 @@ void remove_old_comms(char *filename) {
 
     remove(filename);
     rename(temp_filename, filename);
+}
+
+void create_edited_file(size_t max_len, char *filename, int fixed) {
+    char string_to_add[] = "_aligned";
+    FILE *input = fopen(filename, "r");
+    if (!input) {
+        printf("Error: cannot open file for reading.\n");
+        return;
+    }
+    char *temp_filename = add_aligned(filename, string_to_add);
+    FILE *output = fopen(temp_filename, "w");
+    if (!output) {
+        printf("Error: cannot create temporary file.\n");
+        fclose(input);
+        return;
+    }
+    char line[MAXLINE];
+    while (fgets(line, sizeof(line), input)) {
+        size_t len = strlen(line);
+        if (len > 0 && line[len - 1] == '\n') {
+            line[len - 1] = '\0';
+            len--;
+        }
+
+        fputs(line, output);
+        if (fixed > 0) {
+            for (size_t i = 0; i < fixed; i++) {
+                fputc(' ', output);
+            }
+        } else {
+            for (size_t i = len; i < max_len; i++) {
+                fputc(' ', output);
+            }
+        }
+        fputs(" //\n", output);
+    }
+    fclose(input);
+    fclose(output);
+
 }
 
 void edit_file(size_t max_len, char *filename, int fixed) {
@@ -167,6 +226,7 @@ int main(int argc, char *argv[]) {
     int file_input = 0;
     char *fixed = NULL;
     int get_name = 0;
+    int aligned = 0;
     char *file_input_s = NULL;
     char **arg = argv + 1;
     int remaining = argc - 1;
@@ -196,6 +256,11 @@ int main(int argc, char *argv[]) {
                     remaining -= 2;
                     continue;
                 }
+            } else if (strcmp(current, "-a") == 0) {
+                aligned = 1;
+                arg++;
+                remaining--;
+                continue;
             } else {
                 printf("Unknown option: %s\n", current);
             }
@@ -246,8 +311,13 @@ int main(int argc, char *argv[]) {
     printf("Max line length: %zu\n", max_len);
 
     if (max_len > 0) {
-        edit_file(max_len, filename, fixed_i);
-        printf("File updated successfully.\n");
+        if (aligned == 1) {
+            create_edited_file(max_len, filename, fixed_i);
+            printf("File updated and created successfully.\n");
+        } else {
+            edit_file(max_len, filename, fixed_i);
+            printf("File updated successfully.\n");
+        }
     } else {
         printf("File is empty or could not be processed.\n");
     }
