@@ -1,32 +1,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "parse_func.h"
+/*
 #define MAXLINE 1000
 #define MAX_STYLES 64
 #define MAX_EXT_LEN 16
 #define MAX_COMM_LEN 8
-
+*/
+/*
 typedef struct {
     char ext[MAX_EXT_LEN];
     char comm[MAX_COMM_LEN];
 } Style;
-
-Style styles[MAX_STYLES];
+*/
+// Style styles[MAX_STYLES];
+/*
 int style_count = 0;
 const char ext_filename[] = "comment_styles.txt";
+*/
 
-
-void edit_file(size_t max_len, char *filename, int fixed);
+// void edit_file(size_t max_len, char *filename, int fixed);
 void create_edited_file(size_t max_len, char *filename, int fixed);
-void remove_old_comms(char *filename);
+// void remove_old_comms(char *filename);
 void get_slash(char *filename_sl, char *filename);
 int get_filename(char *line, int lim);
 int check_filename(char *filename);
-size_t file_parse(char *filename);
-char *add_aligned(char *filename, char *string_to_add);
-char *parse_extension(const char *filename);
+// size_t file_parse(char *filename);
+// char *add_aligned(char *filename, char *string_to_add);
+// char *parse_extension(const char *filename);
 
+/*
 char *parse_extension(const char *filename) {
     FILE *fp = fopen(ext_filename, "r");
     if (!fp) return NULL;
@@ -57,7 +61,8 @@ char *parse_extension(const char *filename) {
     }
     return NULL;
 }
-
+*/
+/*
 char *add_aligned(char *filename, char *string_to_add) {
     int len_filename = strlen(filename);
     int len_string = strlen(string_to_add);
@@ -75,7 +80,8 @@ char *add_aligned(char *filename, char *string_to_add) {
     new_filename[i] = '\0';
     return new_filename;
 }
-
+*/
+/*
 void remove_old_comms(char *filename) {
     FILE *input = fopen(filename, "r");
     if (!input) {
@@ -132,6 +138,7 @@ void remove_old_comms(char *filename) {
 
     free(comment_prefix);
 }
+*/
 
 void create_edited_file(size_t max_len, char *filename, int fixed) {
     char string_to_add[] = "_aligned";
@@ -173,7 +180,7 @@ void create_edited_file(size_t max_len, char *filename, int fixed) {
     fclose(output);
 
 }
-
+/*
 void edit_file(size_t max_len, char *filename, int fixed) {
     FILE *input = fopen(filename, "r");
     if (!input) {
@@ -221,7 +228,7 @@ void edit_file(size_t max_len, char *filename, int fixed) {
         printf("Error: could not rename temporary file.\n");
     }
 }
-
+*/
 void get_slash(char *filename_sl, char *filename) {
     char *last_slash = strrchr(filename, '/');
     if (last_slash) {
@@ -247,7 +254,7 @@ int get_filename(char *line, int lim) {
 int check_filename(char *filename) {
     return (strchr(filename, '.') == NULL);
 }
-
+/*
 size_t file_parse(char *filename) {
     FILE *fn = fopen(filename, "r");
     if (!fn) {
@@ -277,6 +284,7 @@ size_t file_parse(char *filename) {
     fclose(fn);
     return max_len;
 }
+*/
 
 int main(int argc, char *argv[]) {
     char filename[MAXLINE];
