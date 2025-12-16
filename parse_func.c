@@ -4,6 +4,46 @@ Style styles[MAX_STYLES];
 int style_count = 0;
 const char ext_filename[] = "comment_styles.txt";
 
+void create_edited_file(size_t max_len, char *filename, int fixed) {
+    char string_to_add[] = "_aligned";
+    FILE *input = fopen(filename, "r");
+    if (!input) {
+        printf("Error: cannot open file for reading.\n");
+        return;
+    }
+
+    char *comment_prefix = parse_extension(filename);
+    char *temp_filename = add_aligned(filename, string_to_add);
+    FILE *output = fopen(temp_filename, "w");
+    if (!output) {
+        printf("Error: cannot create temporary file.\n");
+        fclose(input);
+        return;
+    }
+    char line[MAXLINE];
+    while (fgets(line, sizeof(line), input)) {
+        size_t len = strlen(line);
+        if (len > 0 && line[len - 1] == '\n') {
+            line[len - 1] = '\0';
+            len--;
+        }
+
+        fputs(line, output);
+        if (fixed > 0) {
+            for (size_t i = 0; i < fixed; i++) {
+                fputc(' ', output);
+            }
+        } else {
+            for (size_t i = len; i < max_len; i++) {
+                fputc(' ', output);
+            }
+        }
+        fprintf(output, " %s\n", comment_prefix);
+    }
+    fclose(input);
+    fclose(output);
+}
+
 void edit_file(size_t max_len, char *filename, int fixed) {
     FILE *input = fopen(filename, "r");
     if (!input) {

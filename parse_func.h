@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "checks.h"
 
 #define MAXLINE 1000
 #define MAX_STYLES 64
@@ -11,6 +12,7 @@
 #define MAX_COMM_LEN 8
 
 void edit_file(size_t max_len, char *filename, int fixed);
+void create_edited_file(size_t max_len, char *filename, int fixed);
 void remove_old_comms(char *filename);
 size_t file_parse(char *filename);
 char *add_aligned(char *filename, char *string_to_add);
