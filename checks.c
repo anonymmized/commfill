@@ -1,6 +1,33 @@
 #include <stdio.h>
 #include <string.h>
+#include <dirent.h>
 #include "checks.h"
+#define MAXFILES 500
+#define MAXLINE 1000
+
+int filenames_init(char files_mas[][MAXLINE], char *dir_path) {
+    int i = 0;
+    DIR *dir;
+    struct dirent *entry;
+    dir = opendir(dir_path);
+    if (!dir) {
+        printf("Error with dir opening\n");
+        return -1;
+    }
+    while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_name[0] == '.' && (entry->d_name[1] == '\0' || (entry->d_name[1] == '.' && entry->d_name[2] == '\0')))
+            continue;
+        if (i >= MAXFILES) {
+            printf("Too many files (limit: %d)\n", MAXFILES);
+            break;
+        }
+        strncpy(files_mas[i], entry->d_name, MAXLINE - 1);
+        files_mas[i][MAXLINE - 1] = '\0';
+        i++;
+    }
+    closedir(dir);
+    return i;
+}
 
 void get_slash(char *filename_sl, char *filename) {
     char *last_slash = strrchr(filename, '/');
